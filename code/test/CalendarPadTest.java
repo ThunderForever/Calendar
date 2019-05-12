@@ -25,6 +25,7 @@ public class CalendarPadTest {
 
     @Test
     public void arraynum() {
+        calendarPad.arraynum(3,31);
         assertEquals(Color.blue,calendarPad.showDay[3].getBackground()); //5月1日为目标日 为蓝色背景
         assertEquals(Color.white,calendarPad.showDay[4].getBackground()); //5月2日不是目标日 为白色背景
         assertEquals(Color.red,calendarPad.showDay[6].getForeground()); //周六红色字体
@@ -34,17 +35,20 @@ public class CalendarPadTest {
 
     @Test
     public void setYear(){
-        assertEquals(2019,calendarPad.notepad.getYear());
+        calendarPad.setYear(2000);
+        assertEquals(2000,calendarPad.year);
     }
 
     @Test
     public void setMonth(){
-        assertEquals(5,calendarPad.notepad.getMonth());
+        calendarPad.setMonth(10);
+        assertEquals(10,calendarPad.month);
     }
 
     @Test
     public void setDay(){
-        assertEquals(1,calendarPad.notepad.getDay());
+        calendarPad.setDay(30);
+        assertEquals(30,calendarPad.day);
     }
 
 }
