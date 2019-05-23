@@ -1,13 +1,12 @@
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.*;
 
 import javax.swing.*;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
@@ -68,14 +67,11 @@ public class WebTest {
 
         Thread.sleep(1000);
 
-        WebElement login = driver.findElement(By.className("user-info"));
-
-        login.click();
+        WebElement login = driver.findElement(By.xpath("/html/body/div[1]/div/div[3]/div/ul/li[2]"));
 
 
-        List<WebElement> ele= driver.findElements(By.xpath("//input[@value='qfH821713590']"));
 
-        Assert.assertEquals(1,ele.size());
+        Assert.assertTrue(login.getAttribute("title").equals("qfH821713590"));
 
     }
 
@@ -87,11 +83,68 @@ public class WebTest {
         JavascriptExecutor js=(JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();",logout);
 
-        WebElement login = driver.findElement(By.className("user-info"));
+        Thread.sleep(100);
 
-        List<WebElement> ele = login.findElements(By.className("text"));
 
-        Assert.assertEquals(0,ele.size());
+        WebElement href = driver.findElement(By.xpath("/html/body/div[1]/div/div[3]/div/ul/li/a"));
+
+
+        Assert.assertTrue(href.getAttribute("innerHTML").equals("登录"));
     }
+
+    @Test
+    public void testCookie1() throws Exception{
+
+        //清空cookie
+        driver.manage().deleteAllCookies();
+        login();
+        Thread.sleep(1000);
+
+        Set<Cookie> cookies=driver.manage().getCookies();
+
+
+        //判断cookie是否有新的值
+        Assert.assertFalse(cookies.size()==0);
+
+    }
+
+
+    // 测试刷新对cookie的影响
+    @Test
+    public void testCookie2() throws Exception{
+        driver.manage().deleteAllCookies();
+        login();
+        Thread.sleep(1000);
+
+        Cookie c1 = driver.manage().getCookieNamed("uuid");
+
+        driver.navigate().refresh();
+        Thread.sleep(1000);
+
+        Cookie c2 = driver.manage().getCookieNamed("uuid");
+        Assert.assertTrue(c1.getValue().equals(c2.getValue()));
+
+
+    }
+
+
+    @Test
+    public void testCookie3() throws Exception{
+        driver.manage().deleteAllCookies();
+        login();
+        Thread.sleep(1000);
+
+        Cookie c = driver.manage().getCookieNamed("_lxsdk_s");
+
+        Date time=c.getExpiry();
+        Date currenttime=new Date();
+        currenttime.getTime();
+
+        System.out.println(time.toString());
+        System.out.println(currenttime.toString());
+        //Assert.assertTrue(time.toString().equals(currenttime.toString()));
+
+    }
+
 
 }
