@@ -138,11 +138,14 @@ public class WebTest {
 
         Date time=c.getExpiry();
         Date currenttime=new Date();
-        currenttime.getTime();
 
-        System.out.println(time.toString());
-        System.out.println(currenttime.toString());
-        //Assert.assertTrue(time.toString().equals(currenttime.toString()));
+
+        long t = 30 * 60 * 1000;//30 min
+
+        Date checktime = new Date(currenttime.getTime() + t);
+        /*System.out.println(time.toString());
+        System.out.println(checktime.toString());*/
+        Assert.assertTrue(time.toString().equals(checktime.toString()));
 
     }
 
