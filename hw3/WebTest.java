@@ -19,7 +19,7 @@ public class WebTest {
 
     @BeforeMethod
     public void setUp() throws Exception{
-        String browserDriverUrl = "G:\\software-testing\\chromeDriver\\chromedriver.exe";
+        String browserDriverUrl = "E:\\IDEA-pro\\Web\\src\\main\\resources\\chromedriver.exe";
 
         System.setProperty("webdriver.chrome.driver", browserDriverUrl);
 
@@ -93,5 +93,29 @@ public class WebTest {
 
         Assert.assertEquals(0,ele.size());
     }
+
+    @Test
+    public void testsearch() throws Exception{
+
+        WebElement search_form = driver.findElement(By.xpath("/html/body/div[1]/div/form"));
+        driver.findElement(By.name("kw")).sendKeys("大侦探皮卡丘");
+        search_form.submit();
+        List<WebElement> elements = driver.findElements(By.linkText("大侦探皮卡丘"));
+        Assert.assertEquals(1, elements.size());
+
+
+        driver.findElement(By.name("kw")).clear();
+        driver.findElement(By.name("kw")).sendKeys("5454");
+        WebElement submit = driver.findElement(By.className("submit"));
+        submit.click();
+
+        WebElement container =driver.findElement(By.id("app"));
+        WebElement search_result_box =container.findElement(By.className("search-result-box"));
+        List<WebElement> ele = search_result_box.findElements(By.className("empty-list"));
+        Assert.assertEquals(1, ele.size());
+
+    }
+
+
 
 }
