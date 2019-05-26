@@ -1,10 +1,10 @@
-import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.*;
+import org.testng.Assert;
 
-import javax.swing.*;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -70,8 +70,7 @@ public class WebTest {
         WebElement login = driver.findElement(By.xpath("/html/body/div[1]/div/div[3]/div/ul/li[2]"));
 
 
-
-        Assert.assertTrue(login.getAttribute("title").equals("qfH821713590"));
+        Assert.assertEquals("qfH821713590", login.getAttribute("title"));
 
     }
 
@@ -89,7 +88,7 @@ public class WebTest {
         WebElement href = driver.findElement(By.xpath("/html/body/div[1]/div/div[3]/div/ul/li/a"));
 
 
-        Assert.assertTrue(href.getAttribute("innerHTML").equals("登录"));
+        Assert.assertEquals("登录", href.getAttribute("innerHTML"));
     }
 
     @Test
@@ -104,7 +103,8 @@ public class WebTest {
 
 
         //判断cookie是否有新的值
-        Assert.assertFalse(cookies.size()==0);
+
+        Assert.assertNotEquals(0, cookies.size());
 
     }
 
@@ -122,11 +122,10 @@ public class WebTest {
         Thread.sleep(1000);
 
         Cookie c2 = driver.manage().getCookieNamed("uuid");
-        Assert.assertTrue(c1.getValue().equals(c2.getValue()));
+        Assert.assertEquals(c1.getValue(), c2.getValue());
 
 
     }
-
 
     @Test
     public void testCookie3() throws Exception{
@@ -136,18 +135,76 @@ public class WebTest {
 
         Cookie c = driver.manage().getCookieNamed("_lxsdk_s");
 
-        Date time=c.getExpiry();
+        Date time = c.getExpiry();
         Date currenttime=new Date();
 
 
         long t = 30 * 60 * 1000;//30 min
 
         Date checktime = new Date(currenttime.getTime() + t);
-        /*System.out.println(time.toString());
-        System.out.println(checktime.toString());*/
-        Assert.assertTrue(time.toString().equals(checktime.toString()));
+        System.out.println(time.toString().substring(0,16));
+        System.out.println(checktime.toString().substring(0,16));
+        Assert.assertEquals(time.toString().substring(0,16), checktime.toString().substring(0,16));
 
     }
 
+    @Test
+    public void testSearch() throws Exception{
 
+        WebElement search_form = driver.findElement(By.xpath("/html/body/div[1]/div/form"));
+        driver.findElement(By.name("kw")).sendKeys("大侦探皮卡丘");
+        search_form.submit();
+
+        String currentWindow = driver.getWindowHandle();
+
+
+        Set<String> handles = driver.getWindowHandles();
+
+        Iterator<String> iterator = handles.iterator();
+
+        while (iterator.hasNext()){
+            String handle = iterator.next();
+            if(currentWindow.equals(handle)) continue;
+
+            WebDriver window = driver.switchTo().window(handle);
+
+            System.out.println(window.getCurrentUrl());
+
+            List<WebElement> target = window.findElements(By.linkText("大侦探皮卡丘"));
+
+
+            Assert.assertNotEquals(target.size(),0);
+
+        }
+
+    }
+
+    @Test
+    public void testSearch2(){
+        WebElement search_form = driver.findElement(By.xpath("/html/body/div[1]/div/form"));
+        driver.findElement(By.name("kw")).sendKeys("123456789");
+        search_form.submit();
+
+        String currentWindow = driver.getWindowHandle();
+
+
+        Set<String> handles = driver.getWindowHandles();
+
+        Iterator<String> iterator = handles.iterator();
+
+        while (iterator.hasNext()){
+            String handle = iterator.next();
+            if(currentWindow.equals(handle)) continue;
+
+            WebDriver window = driver.switchTo().window(handle);
+
+            System.out.println(window.getCurrentUrl());
+
+            WebElement result = window.findElement(By.className("empty-list"));
+
+
+            Assert.assertFalse(result == null);
+
+        }
+    }
 }
